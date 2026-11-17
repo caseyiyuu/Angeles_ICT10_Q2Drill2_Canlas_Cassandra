@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Club Members</title>
+
+    <!-- PyScript -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.11.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.11.1/core.js"></script>
+
+    <style>
+        :root {
+            --ink: #51465f;
+            --muted: #8c8098;
+            --lavender: #9c7bd1;
+            --lavender-dark: #8060b7;
+            --peach: #ffe3d5;
+            --cream: #fffaf1;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--ink);
+            background-color: var(--cream);
+            background-image:
+                radial-gradient(circle at 12% 18%, #f8d7e8 0 7px, transparent 8px),
+                radial-gradient(circle at 88% 28%, #d9e9ff 0 6px, transparent 7px),
+                radial-gradient(circle at 16% 82%, #ffe1bd 0 5px, transparent 6px),
+                radial-gradient(circle at 84% 78%, #d9ecd9 0 8px, transparent 9px);
+            font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+        }
+
+        #page-wrap {
+            position: relative;
+            display: grid;
+            min-height: 100vh;
+            place-items: center;
+            padding: 3rem 1rem;
+        }
+
+        #club-card {
+            width: 100%;
+            max-width: 560px;
+            overflow: hidden;
+            border: 2px solid #f1e8f5;
+            border-radius: 2rem;
+            background: #fff;
+            box-shadow: 0 20px 55px rgb(92 66 112 / 12%);
+        }
+
+        #club-header {
+            position: relative;
+            padding: 2rem 1.5rem 1.65rem;
+            text-align: center;
+            background: #f0e9fb;
+        }
+
+        #club-header::after {
+            position: absolute;
+            right: 1.25rem;
+            bottom: 1rem;
+            content: "❤︎⁠";
+            color: #e6a680;
+            font-size: 1.4rem;
+            transform: rotate(12deg);
+        }
+
+        .eyebrow {
+            margin-bottom: 0.45rem;
+            color: var(--lavender-dark);
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        #club-header h1 {
+            margin: 0;
+            font-size: clamp(1.7rem, 5vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .club-header p {
+            margin: 0.5rem 0 0;
+            color: var(--muted);
+        }
+
+        #club-body {
+            padding: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--ink);
+            font-size: 0.92rem;
+            font-weight: 700;
+        }
+
+        #first-name,
+        #last-name {
+            display: block;
+            width: 100%;
+            min-height: 3.2rem;
+            margin-bottom: 1rem;
+            padding: 0.65rem 1rem;
+            border: 2px solid #eee8f2;
+            border-radius: 1rem;
+            color: var(--ink);
+            background: #fffdfd;
+            font: inherit;
+        }
+
+        #first-name::placeholder,
+        #last-name::placeholder {
+            color: #b6aebb;
+        }
+
+        #first-name:focus,
+        #last-name:focus {
+            border-color: #b9a2df;
+            box-shadow: 0 0 0 0.22rem rgb(156 123 209 / 16%);
+            outline: none;
+        }
+
+        #add-button {
+            display: block;
+            width: 100%;
+            min-height: 3.4rem;
+            margin-top: 0.35rem;
+            border: 0;
+            border-radius: 1rem;
+            color: #fff;
+            background: var(--lavender);
+            font: inherit;
+            font-weight: 800;
+            box-shadow: 0 7px 0 #8060b7;
+            transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+            cursor: pointer;
+        }
+
+        #add-button:hover,
+        #add-button:focus-visible {
+            color: #fff;
+            background: var(--lavender-dark);
+            transform: translateY(2px);
+            box-shadow: 0 5px 0 #684a9b;
+        }
+
+        #add-button:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 #684a9b;
+        }
+
+        #section-divider {
+            margin: 2rem 0 1.4rem;
+            border-color: #eee8f2;
+            opacity: 1;
+        }
+
+        #members-heading {
+            margin-bottom: 0.9rem;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        #member-count {
+            display: inline-block;
+            margin-bottom: 0.9rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 999px;
+            color: var(--lavender-dark);
+            background: #f0e9fb;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        #output:empty {
+            display: none;
+        }
+
+        #output {
+            color: var(--ink);
+        }
+
+        #member-list {
+            display: grid;
+            gap: 0.65rem;
+            padding: 0;
+            list-style: none;
+        }
+
+        #member-list li {
+            padding: 0.8rem 1rem;
+            border: 1px solid #eee7f5;
+            border-radius: 0.9rem;
+            background: #fbf8ff;
+        }
+
+        @media (max-width: 575.98px) {
+            #club-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main id="page-wrap">
+        <section id="club-card" aria-labelledby="page-title">
+            <header id="club-header">
+                <h1 id="page-title">Club Members <span aria-hidden="true">🌷</span></h1>
+            </header>
+
+            <div id="club-body">
+                <div>
+                    <label for="first-name">First name</label>
+                    <input type="text" id="first-name"
+                           placeholder="e.g. Cashi" autocomplete="given-name">
+                </div>
+                <div>
+                    <label for="last-name">Last name</label>
+                    <input type="text" id="last-name"
+                           placeholder="e.g. Cnl" autocomplete="family-name">
+                </div>
+
+                <button type="button" id="add-button" py-click="add_member">
+                    Add member <span aria-hidden="true"></span>
+                </button>
+
+                <hr id="section-divider">
+                <h2 id="members-heading">Our members <span aria-hidden="true">💌</span></h2>
+                <div id="output" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Load the Python file -->
+    <script type="py" src="main.py"></script>
+</body>
+</html>
